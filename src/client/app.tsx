@@ -1,4 +1,4 @@
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import { Demo } from "./demo";
 import { Room } from "./room";
 import { bgm, unlockAudio } from "./sound";
@@ -86,6 +86,7 @@ function Lobby({ onEnter, onDemo }: { onEnter: (code: string, watch: boolean) =>
           <span>AI</span>ワード<br />バトル
         </h1>
         <div class="title-fx" aria-hidden="true" />
+        <PromoVideo />
       </header>
 
       <div class="lobby-form">
@@ -139,5 +140,42 @@ function Lobby({ onEnter, onDemo }: { onEnter: (code: string, watch: boolean) =>
         </ul>
       </details>
     </main>
+  );
+}
+
+function PromoVideo() {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const video = useRef<HTMLVideoElement>(null);
+  const open = () => {
+    unlockAudio();
+    bgm.play("none");
+    dialog.current?.showModal();
+    video.current?.play().catch(() => {});
+  };
+  const onClose = () => {
+    video.current?.pause();
+    bgm.play("lobby");
+  };
+
+  return (
+    <>
+      <button type="button" class="promo-btn" onClick={open}>
+        ▶ 紹介動画
+      </button>
+      <dialog
+        ref={dialog}
+        class="promo"
+        onClose={onClose}
+        onClick={(e) => {
+          // 動画の外側 (背景) をクリックしたら閉じる
+          if (e.target === e.currentTarget) e.currentTarget.close();
+        }}
+      >
+        <video ref={video} src="/promo.mp4" poster="/promo-poster.jpg" controls playsInline preload="none" />
+        <button type="button" class="promo-close" aria-label="閉じる" onClick={() => dialog.current?.close()}>
+          ×
+        </button>
+      </dialog>
+    </>
   );
 }

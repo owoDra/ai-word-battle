@@ -128,6 +128,47 @@ summary:focus-visible {
   display: inline-block;
   padding: 0 6px;
 }
+.promo-btn {
+  position: absolute;
+  z-index: 2;
+  right: 10px;
+  bottom: 10px;
+  font-family: var(--f-heavy);
+  font-size: 13px;
+  border: 2px solid var(--ink);
+  padding: 4px 10px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.promo {
+  border: 0;
+  padding: 0;
+  background: none;
+  overflow: visible;
+}
+.promo::backdrop {
+  background: rgb(18 16 16 / 0.85);
+}
+.promo video {
+  display: block;
+  height: min(85vh, 160vw);
+  aspect-ratio: 9 / 16;
+  background: var(--ink);
+  border: 4px solid var(--paper);
+}
+.promo-close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 36px;
+  height: 36px;
+  font: 400 22px/1 var(--f-heavy);
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--ink);
+}
 .lobby-form {
   display: grid;
   gap: 14px;
