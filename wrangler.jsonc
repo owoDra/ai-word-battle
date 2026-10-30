@@ -1,0 +1,25 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ai-word-battle",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "ai": { "binding": "AI" },
+  "durable_objects": {
+    "bindings": [
+      { "name": "ROOM", "class_name": "BattleRoom" },
+      { "name": "BUDGET", "class_name": "AiBudget" }
+    ]
+  },
+  // 無料プランでは SQLite バックエンドの DO のみ利用可能
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["BattleRoom", "AiBudget"] }],
+  "vars": {
+    "ENABLE_DEBUG": "0",
+    "EMBED_MODEL": "@cf/pfnet/plamo-embedding-1b",
+    "NARRATION_MODEL": "@cf/google/gemma-4-26b-a4b-it"
+  },
+  "observability": { "enabled": true }
+}

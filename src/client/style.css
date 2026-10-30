@@ -1,0 +1,1140 @@
+/* 劇画・少年漫画テイスト。漫画原稿の白黒 + 血の赤の単一テーマ */
+:root {
+  color-scheme: light;
+  --paper: #fbfaf6;
+  --ink: #121010;
+  --red: #c8102e;
+  --tone: #d6d2c9;
+  --red-ghost: #eba3ad;
+  --muted: #5d5753;
+  --f-brush: "Yuji Syuku", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --f-heavy: "Dela Gothic One", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --f-body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+body {
+  background: var(--ink);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 15px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+#app {
+  height: 100%;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+button:focus-visible,
+input:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--red);
+  outline-offset: 2px;
+}
+
+/* ---------- 共通ボタン ---------- */
+.btn-ink,
+.btn-red,
+.btn-ghost {
+  font-family: var(--f-heavy);
+  font-size: 17px;
+  border: 3px solid var(--ink);
+  padding: 10px 18px;
+}
+.btn-ink {
+  background: var(--ink);
+  color: var(--paper);
+}
+.btn-red {
+  background: var(--red);
+  color: var(--paper);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.btn-ghost {
+  background: var(--paper);
+  color: var(--ink);
+}
+.big {
+  font-size: 22px;
+  padding: 14px;
+}
+
+/* ---------- ロビー ---------- */
+.lobby {
+  min-height: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--paper);
+  padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
+  display: grid;
+  align-content: start;
+  gap: 24px;
+}
+.title {
+  position: relative;
+  border: 4px solid var(--ink);
+  padding: 24px 16px 20px;
+  overflow: hidden;
+  box-shadow: 6px 6px 0 var(--ink);
+}
+.title-fx {
+  position: absolute;
+  inset: 0;
+  background: repeating-conic-gradient(from 0deg at 70% 60%, var(--ink) 0deg 1.2deg, transparent 1.2deg 8deg);
+  mask: radial-gradient(circle at 70% 60%, transparent 30%, #000 75%);
+  opacity: 0.6;
+  pointer-events: none;
+}
+.title h1 {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-family: var(--f-heavy);
+  font-weight: 400;
+  font-size: clamp(46px, 15vw, 68px);
+  line-height: 1.05;
+  color: var(--red);
+  -webkit-text-stroke: 8px var(--ink);
+  paint-order: stroke fill;
+  transform: rotate(-4deg);
+}
+.title h1 span {
+  color: var(--paper);
+}
+.title-sub {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 8px;
+  font-family: var(--f-brush);
+  font-size: 22px;
+  background: var(--paper);
+  display: inline-block;
+  padding: 0 6px;
+}
+.lobby-form {
+  display: grid;
+  gap: 14px;
+}
+.field {
+  display: grid;
+  gap: 4px;
+  font-weight: 900;
+}
+.field input,
+.join input,
+.move-form input {
+  font: 400 20px var(--f-brush);
+  border: 3px solid var(--ink);
+  border-radius: 0;
+  padding: 10px 12px;
+  background: var(--paper);
+  color: var(--ink);
+  min-width: 0;
+  width: 100%;
+}
+.or {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  color: var(--muted);
+}
+.or::before,
+.or::after {
+  content: "";
+  border-top: 2px solid var(--ink);
+}
+.join {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+.join input {
+  font-family: var(--f-heavy);
+  letter-spacing: 0.3em;
+}
+.link {
+  justify-self: start;
+  background: none;
+  border: 0;
+  padding: 0;
+  font-weight: 700;
+  text-decoration: underline;
+  color: var(--ink);
+}
+.lobby-err {
+  margin: 0;
+  font-family: var(--f-heavy);
+  color: var(--red);
+}
+.rules {
+  border-top: 3px solid var(--ink);
+  padding-top: 12px;
+}
+.rules summary {
+  font-family: var(--f-heavy);
+  font-size: 18px;
+  cursor: pointer;
+}
+.rules ul {
+  padding-left: 1.2em;
+  line-height: 1.7;
+  margin: 8px 0 0;
+}
+.gate {
+  margin-top: 20vh;
+}
+.gate-code {
+  margin: 0;
+  font-family: var(--f-heavy);
+  font-size: 24px;
+}
+
+/* ---------- 対戦画面 ---------- */
+.screen {
+  position: relative;
+  height: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--paper);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+}
+.screen.center {
+  place-items: center;
+  grid-template-rows: 1fr;
+}
+.loading {
+  font-family: var(--f-heavy);
+  font-size: 24px;
+}
+
+.hud {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: max(14px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) 10px max(12px, env(safe-area-inset-left));
+  border-bottom: 4px solid var(--ink);
+  background: var(--paper);
+}
+.fighter {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.fighter.left {
+  order: 0;
+}
+.fighter.right {
+  order: 2;
+  text-align: right;
+}
+.mid {
+  order: 1;
+  display: grid;
+  justify-items: center;
+}
+.fighter .name {
+  font-family: var(--f-heavy);
+  font-size: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.off {
+  font-family: var(--f-body);
+  font-size: 11px;
+  color: var(--red);
+}
+.bar {
+  position: relative;
+  height: 16px;
+  border: 3px solid var(--ink);
+  transform: skewX(-18deg);
+  background: var(--tone);
+  overflow: hidden;
+}
+.bar i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--hp) * 1%);
+}
+.right .bar i {
+  inset: 0 0 0 auto;
+}
+.bar i.main {
+  background: var(--red);
+}
+/* 被弾後に遅れて縮む残像 */
+.bar i.ghost {
+  background: var(--red-ghost);
+}
+.bar i.ghost.drain {
+  animation: drain 0.7s ease-in 0.45s both;
+}
+.fighter.hurt {
+  animation: hudHit 0.35s linear both;
+}
+.fighter.hurt .bar {
+  animation: barFlash 0.4s steps(2) both;
+}
+.hpnum {
+  font-family: var(--f-heavy);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.charge {
+  color: var(--red);
+  font-weight: 400;
+}
+.round {
+  font-family: var(--f-brush);
+  font-size: 22px;
+  line-height: 1;
+}
+.timer {
+  font-family: var(--f-heavy);
+  font-size: 13px;
+  color: var(--red);
+  font-variant-numeric: tabular-nums;
+}
+.timer.hurry {
+  animation: pulse 0.5s ease-in-out infinite alternate;
+}
+
+.stage {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  align-content: center;
+  padding: 10px max(14px, env(safe-area-inset-right)) 10px max(14px, env(safe-area-inset-left));
+}
+.tone {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--tone) 1.2px, transparent 1.4px);
+  background-size: 6px 6px;
+  pointer-events: none;
+}
+
+/* 待機 */
+.waiting {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  text-align: center;
+}
+.waiting p {
+  margin: 0;
+}
+.waiting-label {
+  font-weight: 900;
+}
+.waiting-code {
+  font-family: var(--f-heavy);
+  font-size: 84px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: var(--paper);
+  -webkit-text-stroke: 8px var(--ink);
+  paint-order: stroke fill;
+}
+.waiting-msg {
+  font-family: var(--f-brush);
+  font-size: 24px;
+}
+.waiting-sub {
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+/* 入力待ち */
+.prompt {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+}
+.prompt p {
+  margin: 0;
+}
+.prompt-turn {
+  font-family: var(--f-brush);
+  font-size: 56px;
+  line-height: 1;
+  background: var(--paper);
+  padding: 0 10px;
+}
+.prompt-call {
+  font-family: var(--f-heavy);
+  font-size: 30px;
+  color: var(--red);
+  -webkit-text-stroke: 6px var(--ink);
+  paint-order: stroke fill;
+  transform: rotate(-4deg);
+  animation: pulse 0.9s ease-in-out infinite alternate;
+}
+.ready {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  max-width: 300px;
+}
+.ready li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border: 3px solid var(--ink);
+  background: var(--paper);
+  padding: 6px 10px;
+  font-weight: 700;
+}
+.ready li span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.ready li.done {
+  background: var(--ink);
+  color: var(--paper);
+}
+.ready li.done b {
+  color: #ff6b81;
+}
+
+/* 結果公開 (段階は room.tsx の STEP をクラスで受け取る) */
+.reveal {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  transition: scale 0.6s ease-in;
+}
+.speed {
+  position: absolute;
+  inset: -40% -20%;
+  background: repeating-conic-gradient(from 0deg at 50% 50%, var(--ink) 0deg 1.2deg, transparent 1.2deg 7deg);
+  mask: radial-gradient(circle at 50% 50%, transparent 30%, #000 62%);
+  opacity: 0.25;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+.move {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 4px;
+  max-width: 90%;
+  background: var(--paper);
+  border: 4px solid var(--ink);
+  padding: 8px 12px 10px;
+  box-shadow: 6px 6px 0 var(--ink);
+  visibility: hidden;
+  overflow: hidden;
+  transition: translate 0.5s ease-in;
+}
+/* 属性の一文字を透かしで敷く */
+.move::after {
+  content: attr(data-mark);
+  position: absolute;
+  right: -6px;
+  bottom: -26px;
+  font-family: var(--f-brush);
+  font-size: 96px;
+  line-height: 1;
+  color: var(--ink);
+  opacity: 0.07;
+  pointer-events: none;
+}
+.move.m2::after {
+  right: auto;
+  left: -6px;
+}
+.move > * {
+  position: relative;
+  z-index: 1;
+}
+.move.m1 {
+  justify-self: start;
+  rotate: -2deg;
+}
+.move.m2 {
+  justify-self: end;
+  text-align: right;
+  rotate: 2deg;
+}
+.move.in {
+  visibility: visible;
+}
+/* 攻撃: 赤枠 + 横から叩きつける / 防御: 二重枠 + 上から重く落ちる */
+.move.attack {
+  border-color: var(--red);
+}
+.move.m1.attack.in {
+  animation: slamL 0.4s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+.move.m2.attack.in {
+  animation: slamR 0.4s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+.move.defense {
+  border-style: double;
+  border-width: 8px;
+  padding: 4px 8px 6px;
+}
+.move.defense.in,
+.move.idle.in {
+  animation: dropIn 0.45s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+/* 登場アニメーションより後に書き、詳細度も上げて上書きする */
+.reveal .move.in.hurt {
+  animation: panelHit 0.45s linear both;
+}
+.move .who {
+  font-weight: 900;
+  font-size: 13px;
+}
+.move .word {
+  font-family: var(--f-brush);
+  font-size: clamp(22px, 7vw, 30px);
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+.move.idle .word {
+  color: var(--muted);
+}
+.chips,
+.flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.m2 .chips,
+.m2 .flags {
+  justify-content: flex-end;
+}
+.chips span {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 6px;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+}
+.chips .attr {
+  background: var(--ink);
+  color: var(--paper);
+}
+.chips .sub {
+  border-color: var(--tone);
+  color: var(--muted);
+}
+.flags span {
+  font-family: var(--f-heavy);
+  font-size: 12px;
+  color: var(--red);
+}
+
+/* 溜め: 集中線が濃くなり、画面が寄り、両者がにじり寄る */
+.reveal.charging {
+  scale: 1.05;
+}
+.reveal.charging .speed,
+.reveal.stopped .speed {
+  opacity: 0.9;
+  animation: spin 0.5s linear infinite;
+}
+.reveal.charging .move.m1 {
+  translate: 10px 8px;
+}
+.reveal.charging .move.m2 {
+  translate: -10px -8px;
+}
+/* ヒットストップ: 時間が止まり、画面が反転した衝撃コマになる */
+.reveal.stopped {
+  scale: 1.09;
+  transition: none;
+}
+.reveal.stopped .move.in {
+  translate: 0 0;
+  transition: none;
+}
+.impact-frame {
+  position: absolute;
+  inset: -60%;
+  z-index: 6;
+  pointer-events: none;
+  -webkit-backdrop-filter: invert(1) contrast(1.6) grayscale(1);
+  backdrop-filter: invert(1) contrast(1.6) grayscale(1);
+  background: repeating-conic-gradient(from 0deg at 50% 50%, rgb(18 16 16 / 0.85) 0deg 2deg, transparent 2deg 9deg);
+}
+/* 解放: 揺れの大きさは --amp (ダメージで変わる) */
+.reveal.released {
+  scale: 1;
+  transition: scale 0.25s cubic-bezier(0.2, 1.6, 0.4, 1);
+  animation: shake 0.55s linear both;
+}
+.reveal.second-hit {
+  animation: shake2 0.6s linear both;
+}
+.impact {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 14px;
+  min-height: 56px;
+}
+.sfx {
+  font-family: var(--f-heavy);
+  font-size: 42px;
+  line-height: 1;
+  color: var(--red);
+  -webkit-text-stroke: 7px var(--ink);
+  paint-order: stroke fill;
+  rotate: -10deg;
+  animation: sfx 0.5s cubic-bezier(0.2, 1.8, 0.4, 1) both;
+}
+.dmg {
+  font-family: var(--f-heavy);
+  font-size: 22px;
+  -webkit-text-stroke: 5px var(--paper);
+  paint-order: stroke fill;
+  animation: dmgPop 0.7s cubic-bezier(0.2, 1.8, 0.4, 1) both;
+}
+.headline {
+  position: relative;
+  z-index: 3;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--f-heavy);
+  font-size: 20px;
+  text-align: center;
+  padding: 4px 8px;
+  margin-inline: -14px;
+  transform: skewX(-10deg);
+  visibility: hidden;
+}
+.headline.in {
+  visibility: visible;
+  animation: band 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.narration {
+  position: relative;
+  z-index: 3;
+  margin: 0;
+  min-height: 3.6em;
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 50% / 40%;
+  padding: 10px 22px;
+  visibility: hidden;
+}
+.narration.in {
+  visibility: visible;
+  animation: pop 0.3s ease-out both;
+}
+.narration.pending {
+  color: var(--muted);
+}
+
+/* 入力・終了 */
+.controls {
+  position: relative;
+  z-index: 3;
+  border-top: 4px solid var(--ink);
+  background: var(--paper);
+  padding: 12px max(14px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+}
+.move-form {
+  display: grid;
+  gap: 8px;
+}
+.kind {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.kind button {
+  font: 400 19px var(--f-heavy);
+  padding: 6px 0;
+  border: 3px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+}
+.kind button[aria-pressed="true"] {
+  background: var(--red);
+  color: var(--paper);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+.go {
+  font: 400 18px var(--f-heavy);
+  background: var(--ink);
+  color: var(--paper);
+  border: 0;
+  padding: 0 16px;
+}
+.hint {
+  margin: 0;
+  text-align: center;
+  font-family: var(--f-heavy);
+  font-size: 12px;
+  color: var(--red);
+  letter-spacing: 0.06em;
+}
+.locked,
+.footnote {
+  margin: 0;
+  text-align: center;
+}
+.locked {
+  font-family: var(--f-heavy);
+  font-size: 18px;
+  padding: 16px 0;
+}
+.footnote {
+  font-size: 12px;
+  color: var(--muted);
+}
+.finished {
+  display: grid;
+  gap: 10px;
+}
+.winner {
+  margin: 0;
+  text-align: center;
+  font-family: var(--f-heavy);
+  font-size: 30px;
+  line-height: 1.2;
+  color: var(--paper);
+  -webkit-text-stroke: 7px var(--ink);
+  paint-order: stroke fill;
+  overflow-wrap: anywhere;
+  animation: pop 0.6s cubic-bezier(0.2, 1.8, 0.4, 1) both;
+}
+.winner.me {
+  color: var(--red);
+}
+.finished-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+.toast {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: calc(150px + env(safe-area-inset-bottom));
+  z-index: 10;
+  background: var(--red);
+  color: var(--paper);
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  font-family: var(--f-heavy);
+  padding: 10px 12px;
+  text-align: center;
+  animation: pop 0.25s ease-out both;
+}
+
+/* ---------- 演出レイヤー ---------- */
+.fx-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.reveal > .speed {
+  z-index: 0;
+}
+.toggles {
+  position: absolute;
+  top: 8px;
+  right: max(8px, env(safe-area-inset-right));
+  z-index: 6;
+  display: flex;
+  gap: 6px;
+}
+.toggles button {
+  font: 400 13px var(--f-heavy);
+  width: 34px;
+  height: 30px;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  padding: 0;
+}
+.toggles button[aria-pressed="false"] {
+  color: var(--muted);
+  border-color: var(--tone);
+}
+.tap-to-sound {
+  position: absolute;
+  inset: auto 16px calc(16px + env(safe-area-inset-bottom)) 16px;
+  z-index: 20;
+  font: 400 18px var(--f-heavy);
+  padding: 14px;
+  background: var(--red);
+  color: var(--paper);
+  border: 3px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  animation: pulse 0.8s ease-in-out infinite alternate;
+}
+.screen.inverted {
+  animation: invert 0.32s steps(2) both;
+}
+.stamp-big {
+  position: absolute;
+  z-index: 5;
+  top: 44px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  border: 6px double var(--red);
+  border-radius: 50%;
+  color: var(--red);
+  font-family: var(--f-brush);
+  font-size: 32px;
+  line-height: 1;
+  rotate: 14deg;
+  pointer-events: none;
+  animation: stampIn 0.3s cubic-bezier(0.3, 1.8, 0.5, 1) both;
+}
+.ko {
+  position: absolute;
+  z-index: 7;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--f-brush);
+  font-size: clamp(72px, 26vw, 200px);
+  color: var(--red);
+  -webkit-text-stroke: 3px var(--ink);
+  text-shadow: 6px 6px 0 var(--ink);
+  pointer-events: none;
+  animation: koIn 0.5s cubic-bezier(0.2, 1.6, 0.4, 1) both, fadeOut 0.8s ease-in 2.2s forwards;
+}
+.dmg.huge {
+  font-size: 32px;
+  color: var(--red);
+}
+.fighter.charged .name {
+  color: var(--red);
+  animation: aura 0.35s ease-in-out infinite alternate;
+}
+.fighter.charged .name::after {
+  content: " ゴゴゴ";
+  font-size: 11px;
+  color: var(--ink);
+}
+.bar.danger {
+  animation: danger 0.6s steps(2) infinite;
+}
+
+/* AIなしデモ: 次の結果と属性を選ぶ */
+.demo-bar {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 2px dashed var(--tone);
+}
+.demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+.demo-row span {
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--muted);
+  width: 2.6em;
+}
+.demo-row button {
+  font: 700 12px var(--f-body);
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  padding: 2px 7px;
+}
+.demo-row button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+.move-form.defense .row input {
+  border-style: double;
+  border-width: 6px;
+  padding: 7px 9px;
+}
+
+/* 観戦 (プロジェクター想定): 横幅を広く、文字を大きく */
+.screen.watching {
+  max-width: 1100px;
+}
+.watching .fighter .name {
+  font-size: clamp(15px, 2.4vw, 28px);
+}
+.watching .bar {
+  height: clamp(16px, 2.2vw, 28px);
+}
+.watching .hpnum {
+  font-size: clamp(12px, 1.8vw, 20px);
+}
+.watching .round {
+  font-size: clamp(22px, 3.4vw, 40px);
+}
+.watching .move .word {
+  font-size: clamp(24px, 5vw, 60px);
+}
+.watching .sfx {
+  font-size: clamp(42px, 7vw, 90px);
+}
+.watching .headline {
+  font-size: clamp(20px, 3.4vw, 40px);
+}
+.watching .narration {
+  font-size: clamp(13px, 2vw, 24px);
+}
+
+@keyframes slamL {
+  from {
+    transform: translateX(-120%) rotate(-8deg);
+    opacity: 0;
+  }
+}
+@keyframes slamR {
+  from {
+    transform: translateX(120%) rotate(8deg);
+    opacity: 0;
+  }
+}
+@keyframes flash {
+  0% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes shake {
+  0%,
+  100% {
+    transform: none;
+  }
+  10% {
+    transform: translate(calc(var(--amp, 8px) * -1), calc(var(--amp, 8px) * 0.5)) rotate(-1deg);
+  }
+  25% {
+    transform: translate(var(--amp, 8px), calc(var(--amp, 8px) * -0.6)) rotate(1deg);
+  }
+  40% {
+    transform: translate(calc(var(--amp, 8px) * -0.6), calc(var(--amp, 8px) * -0.4));
+  }
+  55% {
+    transform: translate(calc(var(--amp, 8px) * 0.5), calc(var(--amp, 8px) * 0.4));
+  }
+  75% {
+    transform: translate(calc(var(--amp, 8px) * -0.25), calc(var(--amp, 8px) * 0.1));
+  }
+}
+@keyframes sfx {
+  from {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+@keyframes pop {
+  from {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+}
+@keyframes band {
+  from {
+    transform: skewX(-10deg) scaleX(0);
+    opacity: 0;
+  }
+}
+@keyframes drain {
+  from {
+    width: calc(var(--from) * 1%);
+  }
+}
+@keyframes invert {
+  from {
+    filter: invert(1) contrast(1.4);
+  }
+  to {
+    filter: none;
+  }
+}
+@keyframes stampIn {
+  from {
+    scale: 3;
+    opacity: 0;
+  }
+}
+@keyframes koIn {
+  from {
+    scale: 4;
+    rotate: -20deg;
+    opacity: 0;
+  }
+}
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@keyframes aura {
+  from {
+    text-shadow: 0 0 0 transparent;
+  }
+  to {
+    text-shadow: 0 0 6px var(--red), 2px 0 0 var(--ink);
+  }
+}
+@keyframes danger {
+  50% {
+    border-color: var(--red);
+  }
+}
+@keyframes dropIn {
+  from {
+    transform: translateY(-140%) scale(1.3);
+    opacity: 0;
+  }
+  70% {
+    transform: translateY(4%) scale(0.97);
+    opacity: 1;
+  }
+}
+@keyframes panelHit {
+  0%,
+  100% {
+    transform: none;
+    filter: none;
+  }
+  10% {
+    transform: translate(-10px, 3px);
+    filter: invert(1);
+  }
+  30% {
+    transform: translate(8px, -4px);
+    filter: none;
+  }
+  50% {
+    transform: translate(-5px, 2px);
+  }
+  70% {
+    transform: translate(3px, -1px);
+  }
+}
+@keyframes dmgPop {
+  0% {
+    transform: scale(3.2) rotate(-8deg);
+    opacity: 0;
+  }
+  35% {
+    transform: scale(0.85) rotate(2deg);
+    opacity: 1;
+  }
+  55% {
+    transform: scale(1.12);
+  }
+}
+@keyframes spin {
+  to {
+    rotate: 7deg;
+  }
+}
+@keyframes shake2 {
+  0%,
+  100% {
+    transform: none;
+  }
+  10% {
+    transform: translate(18px, -6px) rotate(2deg);
+  }
+  25% {
+    transform: translate(-16px, 8px) rotate(-2deg);
+  }
+  45% {
+    transform: translate(9px, -4px);
+  }
+  65% {
+    transform: translate(-4px, 2px);
+  }
+}
+@keyframes hudHit {
+  20% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  80% {
+    transform: translateX(-2px);
+  }
+}
+@keyframes barFlash {
+  50% {
+    background: var(--paper);
+    border-color: var(--red);
+  }
+}
+@keyframes pulse {
+  to {
+    transform: scale(1.08) rotate(-4deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

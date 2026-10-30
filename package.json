@@ -1,0 +1,24 @@
+{
+  "name": "ai-word-battle",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "deploy": "vite build && wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "tune": "node scripts/tune.mjs",
+    "simulate": "node scripts/simulate.mjs",
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "preact": "^11.1.0"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.66.0",
+    "@preact/preset-vite": "^2.10.6",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "wrangler": "^4.156.0"
+  }
+}
